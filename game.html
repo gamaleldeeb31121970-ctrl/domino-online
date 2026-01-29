@@ -1,23 +1,171 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>لعبة الدومينو</title>
-  <style>
-    body {
-      background: #1e1e1e;
-      color: white;
-      font-family: Arial;
-      text-align: center;
-      padding-top: 50px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>🀄 Domino Cafe</title>
+<style>
+body {
+  background: #228B22; /* لون الطاولة */
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+/* الطاولة */
+#table {
+  width: 90%;
+  height: 400px;
+  margin: 20px auto;
+  background: #006400; /* أخضر داكن */
+  border-radius: 15px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* اللاعبون */
+.player {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 10px auto;
+}
+
+/* حجرة الدومينو */
+.domino {
+  width: 60px;
+  height: 120px;
+  background: white;
+  color: black;
+  margin: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid black;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s;
+}
+
+.domino:hover {
+  transform: scale(1.2);
+}
+
+.domino .top, .domino .bottom {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid black;
+}
+
+.domino .bottom {
+  border-bottom: none;
+}
+
+/* زر إعادة اللعبة */
+#resetBtn {
+  margin: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
 </head>
 <body>
 
-  <h1>🎮 لعبة الدومينو</h1>
-  <p>اللعبة بدأت بنجاح</p>
-  <p>سيتم إضافة الأحجار وطريقة اللعب قريبًا</p>
+<h1>🀄 Domino Cafe</h1>
+
+<button id="resetBtn">إعادة اللعبة</button>
+
+<!-- اللاعبين -->
+<div id="player1" class="player"></div>
+<div id="table"></div>
+<div id="player2" class="player"></div>
+
+<script>
+// كل أحجار الدومينو
+const tiles = [];
+for (let i=0;i<=6;i++){
+  for (let j=i;j<=6;j++){
+    tiles.push([i,j]);
+  }
+}
+
+// خلط الأحجار
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+// توزيع الحجار
+let player1Tiles = [], player2Tiles = [];
+function dealTiles(){
+  const shuffled = shuffle([...tiles]);
+  player1Tiles = shuffled.slice(0,7);
+  player2Tiles = shuffled.slice(7,14);
+}
+
+// رسم الحجار
+function renderTiles() {
+  const p1 = document.getElementById("player1");
+  const p2 = document.getElementById("player2");
+  p1.innerHTML = "";
+  p2.innerHTML = "";
+
+  player1Tiles.forEach(tile=>{
+    const div = document.createElement("div");
+    div.className="domino";
+    div.innerHTML=`<div class="top">${tile[0]}</div><div class="bottom">${tile[1]}</div>`;
+    div.onclick = ()=>playTile(tile,div,"player1");
+    p1.appendChild(div);
+  });
+
+  player2Tiles.forEach(tile=>{
+    const div = document.createElement("div");
+    div.className="domino";
+    div.innerHTML=`<div class="top">${tile[0]}</div><div class="bottom">${tile[1]}</div>`;
+    div.onclick = ()=>playTile(tile,div,"player2");
+    p2.appendChild(div);
+  });
+}
+
+// اللعب على الطاولة
+const table = document.getElementById("table");
+function playTile(tile,div,player){
+  // إزالة الحجرة من اللاعب
+  if(player==="player1"){
+    player1Tiles = player1Tiles.filter(t=>t!==tile);
+  } else {
+    player2Tiles = player2Tiles.filter(t=>t!==tile);
+  }
+  div.style.position="absolute";
+  div.style.left=Math.random()*(table.clientWidth-70)+"px";
+  div.style.top=Math.random()*(table.clientHeight-130)+"px";
+  table.appendChild(div);
+}
+
+// إعادة اللعبة
+document.getElementById("resetBtn").onclick = ()=>{
+  table.innerHTML="";
+  dealTiles();
+  renderTiles();
+}
+
+// البداية
+dealTiles();
+renderTiles();
+</script>
 
 </body>
 </html>
