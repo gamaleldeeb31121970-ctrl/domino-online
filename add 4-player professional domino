@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>🀄 Domino Cafe</title>
+<title>🀄 Domino Cafe - احترافي</title>
 <style>
 body {
-  background: #228B22; /* لون الطاولة */
+  background: #228B22;
   color: white;
   font-family: Arial, sans-serif;
   text-align: center;
@@ -23,7 +22,7 @@ h1 {
   width: 90%;
   height: 400px;
   margin: 20px auto;
-  background: #006400; /* أخضر داكن */
+  background: #006400;
   border-radius: 15px;
   position: relative;
   display: flex;
@@ -31,7 +30,7 @@ h1 {
   align-items: center;
 }
 
-/* اللاعبون */
+/* اللاعبين */
 .player {
   display: flex;
   justify-content: center;
@@ -81,21 +80,41 @@ h1 {
   border-radius: 10px;
   cursor: pointer;
 }
+
+/* عداد النقاط */
+#scores {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+.score {
+  background: #004d00;
+  padding: 5px 15px;
+  border-radius: 10px;
+}
 </style>
 </head>
 <body>
 
-<h1>🀄 Domino Cafe</h1>
-
+<h1>🀄 Domino Cafe - 4 لاعبين</h1>
 <button id="resetBtn">إعادة اللعبة</button>
+
+<div id="scores">
+  <div class="score" id="score1">اللاعب 1: 0</div>
+  <div class="score" id="score2">اللاعب 2: 0</div>
+  <div class="score" id="score3">اللاعب 3: 0</div>
+  <div class="score" id="score4">اللاعب 4: 0</div>
+</div>
 
 <!-- اللاعبين -->
 <div id="player1" class="player"></div>
 <div id="table"></div>
 <div id="player2" class="player"></div>
+<div id="player3" class="player"></div>
+<div id="player4" class="player"></div>
 
 <script>
-// كل أحجار الدومينو
+// إنشاء كل أحجار الدومينو
 const tiles = [];
 for (let i=0;i<=6;i++){
   for (let j=i;j<=6;j++){
@@ -108,56 +127,65 @@ function shuffle(array) {
   return array.sort(() => Math.random() - 0.5);
 }
 
-// توزيع الحجار
-let player1Tiles = [], player2Tiles = [];
+// اللاعبين
+let players = [[],[],[],[]];
+let scores = [0,0,0,0];
+
+// توزيع الأحجار لكل لاعب
 function dealTiles(){
   const shuffled = shuffle([...tiles]);
-  player1Tiles = shuffled.slice(0,7);
-  player2Tiles = shuffled.slice(7,14);
+  players[0] = shuffled.slice(0,7);
+  players[1] = shuffled.slice(7,14);
+  players[2] = shuffled.slice(14,21);
+  players[3] = shuffled.slice(21,28);
 }
 
 // رسم الحجار
 function renderTiles() {
-  const p1 = document.getElementById("player1");
-  const p2 = document.getElementById("player2");
-  p1.innerHTML = "";
-  p2.innerHTML = "";
-
-  player1Tiles.forEach(tile=>{
-    const div = document.createElement("div");
-    div.className="domino";
-    div.innerHTML=`<div class="top">${tile[0]}</div><div class="bottom">${tile[1]}</div>`;
-    div.onclick = ()=>playTile(tile,div,"player1");
-    p1.appendChild(div);
-  });
-
-  player2Tiles.forEach(tile=>{
-    const div = document.createElement("div");
-    div.className="domino";
-    div.innerHTML=`<div class="top">${tile[0]}</div><div class="bottom">${tile[1]}</div>`;
-    div.onclick = ()=>playTile(tile,div,"player2");
-    p2.appendChild(div);
-  });
+  for(let i=0;i<4;i++){
+    const playerDiv = document.getElementById("player"+(i+1));
+    playerDiv.innerHTML="";
+    players[i].forEach(tile=>{
+      const div = document.createElement("div");
+      div.className="domino";
+      div.innerHTML=`<div class="top">${tile[0]}</div><div class="bottom">${tile[1]}</div>`;
+      div.onclick = ()=>playTile(tile,div,i);
+      playerDiv.appendChild(div);
+    });
+  }
 }
 
 // اللعب على الطاولة
 const table = document.getElementById("table");
-function playTile(tile,div,player){
+let currentPlayer = 0;
+
+function playTile(tile,div,playerIndex){
+  if(playerIndex!==currentPlayer) return alert("ليس دورك!");
   // إزالة الحجرة من اللاعب
-  if(player==="player1"){
-    player1Tiles = player1Tiles.filter(t=>t!==tile);
-  } else {
-    player2Tiles = player2Tiles.filter(t=>t!==tile);
-  }
+  players[playerIndex] = players[playerIndex].filter(t=>t!==tile);
   div.style.position="absolute";
   div.style.left=Math.random()*(table.clientWidth-70)+"px";
   div.style.top=Math.random()*(table.clientHeight-130)+"px";
   table.appendChild(div);
+
+  // تحديث النقاط
+  scores[playerIndex]+=tile[0]+tile[1];
+  document.getElementById("score"+(playerIndex+1)).innerText=`اللاعب ${playerIndex+1}: ${scores[playerIndex]}`;
+
+  // تغيير الدور
+  currentPlayer = (currentPlayer+1)%4;
+  renderTiles();
 }
 
 // إعادة اللعبة
 document.getElementById("resetBtn").onclick = ()=>{
   table.innerHTML="";
+  currentPlayer=0;
+  scores=[0,0,0,0];
+  document.getElementById("score1").innerText="اللاعب 1: 0";
+  document.getElementById("score2").innerText="اللاعب 2: 0";
+  document.getElementById("score3").innerText="اللاعب 3: 0";
+  document.getElementById("score4").innerText="اللاعب 4: 0";
   dealTiles();
   renderTiles();
 }
