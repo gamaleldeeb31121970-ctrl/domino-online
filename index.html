@@ -2,37 +2,97 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>دومينو 3D</title>
-<link rel="stylesheet" href="style.css">
+<title>دومينو أونلاين</title>
+
+<style>
+  body {
+    background: #1e1e1e;
+    color: white;
+    text-align: center;
+    font-family: Arial;
+  }
+
+  #table {
+    width: 90%;
+    height: 300px;
+    margin: 20px auto;
+    border: 3px solid #fff;
+    position: relative;
+    background: #2e7d32;
+  }
+
+  .domino {
+    width: 60px;
+    height: 120px;
+    background: white;
+    color: black;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    user-select: none;
+  }
+
+  .half {
+    flex: 1;
+    border-bottom: 1px solid black;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .half:last-child {
+    border-bottom: none;
+  }
+</style>
 </head>
+
 <body>
 
-<h2>🀄 دومينو أونلاين (تجربة 3D)</h2>
+<h1>🎲 دومينو أونلاين</h1>
 
-<div class="scene">
-  <div class="domino">
-    <div class="face front">
-      <div class="half">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-      <div class="half">
-        <span class="dot"></span>
-      </div>
-    </div>
-
-    <div class="face back"></div>
-    <div class="face left"></div>
-    <div class="face right"></div>
-    <div class="face top"></div>
-    <div class="face bottom"></div>
+<div id="table">
+  <div class="domino" id="domino">
+    <div class="half">6</div>
+    <div class="half">3</div>
   </div>
 </div>
 
-<p class="hint">المس الحجر واسحبه 👆</p>
+<script>
+  const domino = document.getElementById("domino");
+  let offsetX, offsetY, dragging = false;
 
-<script src="game.js"></script>
+  domino.addEventListener("mousedown", startDrag);
+  document.addEventListener("mousemove", drag);
+  document.addEventListener("mouseup", stopDrag);
+
+  domino.addEventListener("touchstart", startDrag);
+  document.addEventListener("touchmove", drag);
+  document.addEventListener("touchend", stopDrag);
+
+  function startDrag(e) {
+    dragging = true;
+    const rect = domino.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    offsetX = touch.clientX - rect.left;
+    offsetY = touch.clientY - rect.top;
+  }
+
+  function drag(e) {
+    if (!dragging) return;
+    const touch = e.touches ? e.touches[0] : e;
+    domino.style.left = (touch.clientX - offsetX) + "px";
+    domino.style.top  = (touch.clientY - offsetY) + "px";
+  }
+
+  function stopDrag() {
+    dragging = false;
+  }
+</script>
+
 </body>
 </html>
