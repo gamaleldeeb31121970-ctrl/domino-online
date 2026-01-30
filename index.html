@@ -1,1 +1,26 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Domino Casino</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="menu">
+  <h1>🎲 Domino Casino</h1>
+  <button onclick="startGame(2)">لاعبين</button>
+  <button onclick="startGame(4)">4 لاعبين</button>
+  <p>أنت ضد الكمبيوتر</p>
+</div>
+
+<div id="game" class="hidden">
+  <div id="info">الدور: <span id="turn"></span></div>
+  <div id="board"></div>
+  <div id="hand"></div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
 
