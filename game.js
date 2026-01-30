@@ -1,118 +1,148 @@
+let playerId = "";
+let roomId = "";
+let myPieces = [];
 
-let playerId = '';
-let roomId = '';
-let playerPieces = [];
-
-function generatePieces() {
-  let pieces = [];
-  for(let i=0;i<=6;i++){
-    for(let j=i;j<=6;j++){
-      pieces.push({left:i,right:j});
+// توليد الدومينو
+function generateDomino() {
+  const pieces = [];
+  for (let i = 0; i <= 6; i++) {
+    for (let j = i; j <= 6; j++) {
+      pieces.push({ left: i, right: j });
     }
   }
   return shuffle(pieces);
 }
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
 }
 
-// دخول اللعبة مباشرة بعد كتابة الاسم
+// دخول اللعبة
 function joinGame() {
-  const playerName = document.getElementById('playerName').value.trim();
-  if(!playerName) return alert("اكتب اسمك");
+  const name = document.getElementById("playerName").value.trim();
+  if (!name) return alert("اكتب اسمك");
 
-  // البحث عن غرفة مفتوحة أو إنشاء غرفة جديدة
-  database.ref('rooms').once('value').then(snapshot => {
-    let rooms = snapshot.val() || {};
-    let joined = false;
+  database.ref("rooms").once("value").then(snap => {
+    let rooms = snap.val() || {};
 
-    for(let rId in rooms){
-      let room = rooms[rId];
-      if(Object.keys(room.players).length < 2){
-        roomId = rId;
-        playerId = 'player2';
-        database.ref('rooms/' + roomId + '/players/' + playerId).set({name:playerName, pieces:[]});
-        joined = true;
-        break;
+    for (let id in rooms) {
+      if (Object.keys(rooms[id].players).length < 4) {
+        roomId = id;
+        return joinRoom(name);
       }
     }
 
-    if(!joined){
-      roomId = 'room' + Date.now();
-      playerId = 'player1';
-      database.ref('rooms/' + roomId).set({
-        players: { player1: {name:playerName, pieces:[]} },
-        board: [],
-        turn: 'player1'
-      });
+    // إنشاء غرفة جديدة
+    roomId = "room_" + Date.now();
+    createRoom(name);
+  });
+}
+
+// إنشاء غرفة
+function createRoom(name) {
+  const domino = generateDomino();
+  database.ref("rooms/" + roomId).set({
+    board: [],
+    turn: 0,
+    domino: domino,
+    players: {}
+  });
+
+  joinRoom(name);
+}
+
+// الانضمام
+function joinRoom(name) {
+  const playersRef = database.ref(`rooms/${roomId}/players`);
+
+  playersRef.once("value").then(snap => {
+    const count = snap.numChildren();
+    playerId = "player" + count;
+
+    const pieces = [];
+    for (let i = 0; i < 7; i++) {
+      pieces.push(database.ref(`rooms/${roomId}/domino`).get().then());
     }
 
-    // عرض اللعبة بعد دخول اللاعب
-    document.getElementById('roomIdDisplay').innerText = roomId;
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('game').style.display = 'block';
+    playersRef.child(playerId).set({
+      name: name,
+      pieces: []
+    });
 
-    playerPieces = generatePieces().slice(0,7);
-    renderPieces();
-    listenBoard();
-    listenTurn();
-  }).catch(err => console.error("خطأ في الاتصال بقاعدة البيانات:", err));
-}
-
-function listenBoard() {
-  const boardRef = database.ref('rooms/' + roomId + '/board');
-  boardRef.on('value', snapshot => {
-    const board = snapshot.val() || [];
-    renderBoard(board);
+    startGame();
   });
 }
 
-function listenTurn() {
-  const turnRef = database.ref('rooms/' + roomId + '/turn');
-  turnRef.on('value', snapshot => {
-    document.getElementById('turnDisplay').innerText = snapshot.val();
+// بدء اللعبة
+function startGame() {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  document.getElementById("roomId").innerText = roomId;
+
+  listenRoom();
+}
+
+// متابعة الغرفة
+function listenRoom() {
+  database.ref("rooms/" + roomId).on("value", snap => {
+    const data = snap.val();
+    if (!data) return;
+
+    document.getElementById("turn").innerText = data.turn;
+    renderBoard(data.board);
+
+    const me = data.players[playerId];
+    if (me) {
+      myPieces = me.pieces || [];
+      renderPieces();
+    }
   });
 }
 
+// رسم الطاولة
 function renderBoard(board) {
-  const boardDiv = document.getElementById('board');
-  boardDiv.innerHTML = '';
-  for (const pieceId in board) {
-    const piece = board[pieceId];
-    const img = document.createElement('img');
-    img.className = 'piece';
-    img.src = `assets/tiles/tile_${piece.left}_${piece.right}.png`;
-    boardDiv.appendChild(img);
-  }
-}
-
-function renderPieces() {
-  const piecesDiv = document.getElementById('pieces');
-  piecesDiv.innerHTML = '';
-  playerPieces.forEach((p,index)=>{
-    const img = document.createElement('img');
-    img.className = 'piece';
+  const div = document.getElementById("board");
+  div.innerHTML = "";
+  board.forEach(p => {
+    const img = document.createElement("img");
     img.src = `assets/tiles/tile_${p.left}_${p.right}.png`;
-    img.onclick = ()=>playPiece(index);
-    piecesDiv.appendChild(img);
+    img.className = "piece";
+    div.appendChild(img);
   });
 }
 
-function playPiece(index){
-  const roomRef = database.ref('rooms/' + roomId);
-  roomRef.child('turn').once('value').then(snapshot => {
-    if(snapshot.val() !== playerId) return alert("ليس دورك بعد!");
-    
-    const piece = playerPieces[index];
-    roomRef.child('board').push(piece);
-    playerPieces.splice(index,1);
-    renderPieces();
+// رسم قطع اللاعب
+function renderPieces() {
+  const div = document.getElementById("pieces");
+  div.innerHTML = "";
+  myPieces.forEach((p, i) => {
+    const img = document.createElement("img");
+    img.src = `assets/tiles/tile_${p.left}_${p.right}.png`;
+    img.className = "piece";
+    img.onclick = () => playPiece(i);
+    div.appendChild(img);
+  });
+}
 
-    roomRef.update({ turn: playerId === 'player1' ? 'player2' : 'player1' });
-  }).catch(err => console.error("خطأ في اللعب:", err));
+// لعب قطعة
+function playPiece(index) {
+  const roomRef = database.ref("rooms/" + roomId);
+
+  roomRef.once("value").then(snap => {
+    const data = snap.val();
+    if (data.turn !== playerId) return alert("مش دورك");
+
+    const piece = myPieces[index];
+    data.board.push(piece);
+    myPieces.splice(index, 1);
+
+    roomRef.child("players/" + playerId + "/pieces").set(myPieces);
+    roomRef.child("board").set(data.board);
+
+    const nextTurn =
+      (parseInt(data.turn.replace("player", "")) + 1) %
+      Object.keys(data.players).length;
+
+    roomRef.child("turn").set("player" + nextTurn);
+  });
 }
