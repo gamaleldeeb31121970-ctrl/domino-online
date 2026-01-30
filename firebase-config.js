@@ -3,7 +3,7 @@
 
 <script>
   const firebaseConfig = {
-    apiKey: "AIza...your_apiKey...",
+    apiKey: "AIzaSy...خاصتك...",
     authDomain: "your-project.firebaseapp.com",
     databaseURL: "https://your-project-default-rtdb.firebaseio.com",
     projectId: "your-project",
