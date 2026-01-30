@@ -1,1 +1,46 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: radial-gradient(#145214, #0b2e13);
+  color: white;
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+#menu {
+  margin-top: 80px;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 18px;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  background: gold;
+  cursor: pointer;
+}
+
+#board {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+  perspective: 800px;
+}
+
+#hand {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.piece {
+  width: 60px;
+  margin: 4px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 6px 10px rgba(0,0,0,0.6);
+  transform: rotateX(20deg);
+}
 
