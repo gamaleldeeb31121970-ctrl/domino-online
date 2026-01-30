@@ -1,26 +1,69 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<title>Domino Casino</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+* {
+  box-sizing: border-box;
+}
 
-<div id="menu">
-  <h1>🎲 Domino Casino</h1>
-  <button onclick="startGame(2)">لاعبين</button>
-  <button onclick="startGame(4)">4 لاعبين</button>
-  <p>أنت ضد الكمبيوتر</p>
-</div>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background: #0b5e2b;
+  color: #fff;
+}
 
-<div id="game" class="hidden">
-  <div id="info">الدور: <span id="turn"></span></div>
-  <div id="board"></div>
-  <div id="hand"></div>
-</div>
+/* القائمة */
+#menu {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
 
-<script src="game.js"></script>
-</body>
-</html>
+button {
+  padding: 12px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
+/* اللعبة */
+#game {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
+}
+
+#info {
+  text-align: center;
+  padding: 10px;
+  font-size: 18px;
+  background: rgba(0,0,0,0.3);
+}
+
+/* أرضية اللعب */
+#board {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+/* يد اللاعب */
+#hand {
+  min-height: 90px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+  background: rgba(0,0,0,0.4);
+}
