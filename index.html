@@ -1,1 +1,33 @@
 
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>دومينو أونلاين</title>
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+
+<body>
+
+<div id="login">
+  <h2>لعبة الدومينو أونلاين</h2>
+  <input id="playerName" placeholder="اسمك">
+  <button onclick="joinGame()">دخول اللعبة</button>
+</div>
+
+<div id="game" style="display:none">
+  <h3>الغرفة: <span id="roomId"></span></h3>
+  <h4>الدور: <span id="turn"></span></h4>
+
+  <div id="board"></div>
+  <hr>
+  <div id="pieces"></div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
