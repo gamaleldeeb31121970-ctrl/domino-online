@@ -4,7 +4,6 @@ import { collection, addDoc, updateDoc, doc, getDocs, query, orderBy } from 'fir
 
 /**
  * إضافة لاعب جديد
- * @param {string} name - اسم اللاعب
  */
 export async function addPlayer(name) {
   try {
@@ -21,9 +20,7 @@ export async function addPlayer(name) {
 }
 
 /**
- * تحديث نقاط لاعب موجود
- * @param {string} playerId - ID اللاعب
- * @param {number} newScore - النقاط الجديدة
+ * تحديث نقاط لاعب
  */
 export async function updateScore(playerId, newScore) {
   try {
@@ -36,7 +33,7 @@ export async function updateScore(playerId, newScore) {
 }
 
 /**
- * جلب قائمة اللاعبين مرتبة حسب النقاط من الأعلى للأدنى
+ * جلب قائمة اللاعبين
  */
 export async function getPlayers() {
   try {
