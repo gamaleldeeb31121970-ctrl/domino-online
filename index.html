@@ -1,29 +1,24 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>لعبة دومينو أونلاين</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; }
-    #playersList { margin-top: 20px; }
-    input, button { padding: 10px; margin: 5px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Domino 3D - Smart Play Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"></script>
+    <script src="js/firebase.js" defer></script>
+
+    <!-- Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- كود اللعبة -->
+    <script src="js/main.js" defer></script>
 </head>
 <body>
-  <h1>لعبة دومينو أونلاين</h1>
-
-  <div id="loginDiv">
-    <input type="text" id="playerName" placeholder="اكتب اسمك">
-    <button id="startBtn">ابدأ اللعب</button>
-  </div>
-
-  <div id="gameDiv" style="display:none;">
-    <h2 id="welcome"></h2>
-    <button id="addScoreBtn">زود نقاطي +1</button>
-    <h3>Leaderboard</h3>
-    <ul id="playersList"></ul>
-  </div>
-
-  <script type="module" src="main.js"></script>
+    <h1 style="text-align:center; color:white; margin-top:10px;">لعبة دومينو 3D</h1>
+    <div id="game-container"></div>
 </body>
 </html>
