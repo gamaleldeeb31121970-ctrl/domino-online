@@ -18,9 +18,9 @@ const firebaseConfig = {
 // تهيئة Firebase
 const app = initializeApp(firebaseConfig);
 
-// تهيئة الخدمات اللي هتستخدمها في مشروعك
+// تهيئة الخدمات اللي هتستخدمها
 export const db = getFirestore(app);   // قاعدة البيانات
-export const auth = getAuth(app);      // تسجيل الدخول / Auth
+export const auth = getAuth(app);      // تسجيل الدخول
 export const analytics = getAnalytics(app); // التحليلات
 
 export default app;
